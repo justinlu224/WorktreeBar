@@ -4,6 +4,8 @@
 
 A macOS menu bar app for managing git worktrees and monitoring Claude Code session status.
 
+![WorktreeBar screenshot](screenshots/demo.png)
+
 ## Features
 
 - **Menu bar resident** — Lives in the menu bar (no Dock icon). Click the branch icon to open the panel.

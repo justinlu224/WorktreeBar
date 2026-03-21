@@ -1,21 +1,21 @@
 import Foundation
 
 enum ClaudeStatus: Equatable {
-    case none                   // 無狀態檔
-    case active                 // 處理中（思考/生成回應）
-    case toolRunning            // 工具執行中
-    case waitingPermission      // 等待授權（需要使用者操作！）
-    case idle                   // 等待輸入
-    case ended                  // 已結束
+    case none
+    case active
+    case toolRunning
+    case waitingPermission
+    case idle
+    case ended
 
     var label: String {
         switch self {
         case .none: return ""
-        case .active: return "Claude 處理中"
-        case .toolRunning: return "工具執行中"
-        case .waitingPermission: return "等待授權"
-        case .idle: return "等待輸入"
-        case .ended: return "已結束"
+        case .active: return "Active"
+        case .toolRunning: return "Tool Running"
+        case .waitingPermission: return "Waiting Permission"
+        case .idle: return "Idle"
+        case .ended: return "Ended"
         }
     }
 

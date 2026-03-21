@@ -17,7 +17,7 @@ class AppState: ObservableObject {
 
     var hasRepo: Bool { !repoPath.isEmpty }
 
-    /// Menu bar 顯示的文字 — 優先順序：⚠ > ↑ > !
+    /// Menu bar badge text — priority: ⚠ > ↑ > !
     var menuBarBadge: String {
         let working = worktrees.filter { $0.claudeStatus.isWorking }.count
         let waiting = worktrees.filter { $0.claudeStatus == .waitingPermission }.count
@@ -122,20 +122,20 @@ class AppState: ObservableObject {
                 case .idle:
                     NotificationManager.shared.notify(
                         branch: branch, path: path,
-                        title: "Claude 已完成",
-                        body: "\(branch) 的 Claude 已完成處理，請查看結果"
+                        title: "Claude Finished",
+                        body: "Claude on \(branch) has finished processing"
                     )
                 case .waitingPermission:
                     NotificationManager.shared.notify(
                         branch: branch, path: path,
-                        title: "Claude 等待授權",
-                        body: "\(branch) 的 Claude 需要授權才能繼續"
+                        title: "Claude Needs Permission",
+                        body: "Claude on \(branch) is waiting for permission to continue"
                     )
                 case .ended:
                     NotificationManager.shared.notify(
                         branch: branch, path: path,
-                        title: "Claude Session 已結束",
-                        body: "\(branch) 的 Claude 已結束"
+                        title: "Claude Session Ended",
+                        body: "Claude on \(branch) has ended"
                     )
                 default:
                     break

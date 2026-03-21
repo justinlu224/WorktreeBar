@@ -32,10 +32,10 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.setNotificationCategories([category])
     }
 
-    func notify(branch: String, path: String, title: String = "Claude 已完成", body: String? = nil) {
+    func notify(branch: String, path: String, title: String = "Claude Finished", body: String? = nil) {
         let content = UNMutableNotificationContent()
         content.title = title
-        content.body = body ?? "\(branch) 的 Claude 已完成處理，請查看結果"
+        content.body = body ?? "Claude on \(branch) has finished processing"
         content.sound = .default
         content.categoryIdentifier = categoryID
         content.userInfo = ["path": path]

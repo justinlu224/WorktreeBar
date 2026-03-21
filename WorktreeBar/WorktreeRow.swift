@@ -21,7 +21,7 @@ struct WorktreeRow: View {
         guard let date = worktree.lastCommitDate else { return "" }
         let formatter = RelativeDateTimeFormatter()
         formatter.unitsStyle = .abbreviated
-        return "最後 commit: " + formatter.localizedString(for: date, relativeTo: Date())
+        return "Last commit: " + formatter.localizedString(for: date, relativeTo: Date())
     }
 
     var body: some View {
@@ -58,7 +58,7 @@ struct WorktreeRow: View {
 
                 // Main repo tag
                 if worktree.isMain {
-                    Text("主 Repo")
+                    Text("Main")
                         .font(.caption)
                         .fontWeight(.medium)
                         .foregroundColor(.purple)
@@ -75,7 +75,7 @@ struct WorktreeRow: View {
                 }
 
                 // Dirty/clean tag
-                Text(worktree.isDirty ? "有未存變更" : "乾淨")
+                Text(worktree.isDirty ? "Dirty" : "Clean")
                     .font(.caption)
                     .foregroundColor(worktree.isDirty ? .orange : .green)
                     .padding(.horizontal, 8)
@@ -91,11 +91,11 @@ struct WorktreeRow: View {
                 if worktree.ahead > 0 || worktree.behind > 0 {
                     HStack(spacing: 4) {
                         if worktree.ahead > 0 {
-                            Text("\u{2191}\(worktree.ahead) 未推")
+                            Text("\u{2191}\(worktree.ahead) ahead")
                                 .foregroundColor(.green)
                         }
                         if worktree.behind > 0 {
-                            Text("\u{2193}\(worktree.behind) 未拉")
+                            Text("\u{2193}\(worktree.behind) behind")
                                 .foregroundColor(.red)
                         }
                     }
@@ -118,7 +118,7 @@ struct WorktreeRow: View {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(.orange)
                             .font(.caption)
-                        Text("確定移除此 worktree？此操作無法復原")
+                        Text("Remove this worktree? This cannot be undone.")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -129,13 +129,13 @@ struct WorktreeRow: View {
                         .textSelection(.enabled)
                     HStack(spacing: 8) {
                         Spacer()
-                        Button("取消") {
+                        Button("Cancel") {
                             showRemoveConfirm = false
                         }
                         .buttonStyle(.bordered)
                         .controlSize(.small)
 
-                        Button("移除") {
+                        Button("Remove") {
                             showRemoveConfirm = false
                             appState.removeWorktree(worktree)
                         }
@@ -186,20 +186,20 @@ struct WorktreeRow: View {
             }
         }
         .contextMenu {
-            Button("用 Terminal 開啟") {
+            Button("Open in Terminal") {
                 appState.openTerminal(at: worktree.path)
             }
-            Button("用 Android Studio 開啟") {
+            Button("Open in Android Studio") {
                 appState.openInAndroidStudio(at: worktree.path)
             }
             Divider()
-            Button("複製路徑") {
+            Button("Copy Path") {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(worktree.path, forType: .string)
             }
             if !worktree.isMain {
                 Divider()
-                Button("移除 Worktree", role: .destructive) {
+                Button("Remove Worktree", role: .destructive) {
                     showRemoveConfirm = true
                 }
             }

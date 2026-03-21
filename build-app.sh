@@ -49,5 +49,9 @@ cat > "$APP_BUNDLE/Contents/Info.plist" << 'PLIST'
 </plist>
 PLIST
 
+# Sign the app bundle (required for UNUserNotificationCenter)
+echo "Signing app bundle (ad-hoc)..."
+codesign --force --deep --sign - "$APP_BUNDLE"
+
 echo "Done! App bundle created at: $APP_BUNDLE"
 echo "Run with: open $APP_BUNDLE"

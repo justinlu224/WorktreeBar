@@ -16,7 +16,13 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.delegate = self
 
         // Request permission
-        center.requestAuthorization(options: [.alert, .sound]) { _, _ in }
+        center.requestAuthorization(options: [.alert, .sound]) { granted, error in
+            if let error = error {
+                print("[WorktreeBar] Notification auth error: \(error.localizedDescription)")
+            } else {
+                print("[WorktreeBar] Notification auth granted: \(granted)")
+            }
+        }
 
         // Register action category
         let openAction = UNNotificationAction(
@@ -32,10 +38,10 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         center.setNotificationCategories([category])
     }
 
-    func notify(branch: String, path: String, title: String = "Claude Finished", body: String? = nil) {
+    func notify(branch: String, path: String, title: String, body: String) {
         let content = UNMutableNotificationContent()
         content.title = title
-        content.body = body ?? "Claude on \(branch) has finished processing"
+        content.body = body
         content.sound = .default
         content.categoryIdentifier = categoryID
         content.userInfo = ["path": path]
@@ -45,7 +51,11 @@ final class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
             content: content,
             trigger: nil // deliver immediately
         )
-        UNUserNotificationCenter.current().add(request)
+        UNUserNotificationCenter.current().add(request) { error in
+            if let error = error {
+                print("[WorktreeBar] Failed to deliver notification: \(error.localizedDescription)")
+            }
+        }
     }
 
     // MARK: - UNUserNotificationCenterDelegate

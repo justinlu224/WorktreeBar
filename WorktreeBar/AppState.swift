@@ -63,6 +63,16 @@ class AppState: ObservableObject {
             }
 
             await MainActor.run { [trees] in
+                for newTree in trees {
+                    if let oldTree = self.worktrees.first(where: { $0.path == newTree.path }) {
+                        self.checkAndNotifyTransition(
+                            oldStatus: oldTree.claudeStatus,
+                            newStatus: newTree.claudeStatus,
+                            branch: newTree.branch,
+                            path: newTree.path
+                        )
+                    }
+                }
                 self.worktrees = trees
                 self.isLoading = false
             }
@@ -114,36 +124,48 @@ class AppState: ObservableObject {
             let oldStatus = worktrees[i].claudeStatus
             let newStatus = claudeMap[worktrees[i].path] ?? .none
 
-            // Notify on meaningful transitions from working states
-            if oldStatus.isWorking {
-                let branch = worktrees[i].branch
-                let path = worktrees[i].path
-                switch newStatus {
-                case .idle:
-                    NotificationManager.shared.notify(
-                        branch: branch, path: path,
-                        title: "Claude Finished",
-                        body: "Claude on \(branch) has finished processing"
-                    )
-                case .waitingPermission:
-                    NotificationManager.shared.notify(
-                        branch: branch, path: path,
-                        title: "Claude Needs Permission",
-                        body: "Claude on \(branch) is waiting for permission to continue"
-                    )
-                case .ended:
-                    NotificationManager.shared.notify(
-                        branch: branch, path: path,
-                        title: "Claude Session Ended",
-                        body: "Claude on \(branch) has ended"
-                    )
-                default:
-                    break
-                }
-            }
+            checkAndNotifyTransition(
+                oldStatus: oldStatus,
+                newStatus: newStatus,
+                branch: worktrees[i].branch,
+                path: worktrees[i].path
+            )
             worktrees[i].claudeStatus = newStatus
         }
         sortWorktrees(&worktrees)
+    }
+
+    // MARK: - Notification transitions
+
+    private func checkAndNotifyTransition(
+        oldStatus: ClaudeStatus,
+        newStatus: ClaudeStatus,
+        branch: String,
+        path: String
+    ) {
+        guard oldStatus.isWorking, oldStatus != newStatus else { return }
+        switch newStatus {
+        case .idle:
+            NotificationManager.shared.notify(
+                branch: branch, path: path,
+                title: "Claude Finished",
+                body: "Claude on \(branch) has finished processing"
+            )
+        case .waitingPermission:
+            NotificationManager.shared.notify(
+                branch: branch, path: path,
+                title: "Claude Needs Permission",
+                body: "Claude on \(branch) is waiting for permission to continue"
+            )
+        case .ended, .none:
+            NotificationManager.shared.notify(
+                branch: branch, path: path,
+                title: "Claude Session Ended",
+                body: "Claude on \(branch) has ended"
+            )
+        default:
+            break
+        }
     }
 
     // MARK: - Sorting

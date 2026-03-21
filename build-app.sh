@@ -17,6 +17,12 @@ mkdir -p "$APP_BUNDLE/Contents/Resources"
 # Copy binary
 cp ".build/release/$APP_NAME" "$APP_BUNDLE/Contents/MacOS/$APP_NAME"
 
+# Generate and copy app icon
+echo "Generating app icon..."
+swiftc -framework AppKit -o "$BUILD_DIR/.build/generate-icon" "$BUILD_DIR/generate-icon.swift"
+"$BUILD_DIR/.build/generate-icon"
+cp "$BUILD_DIR/.build/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
+
 # Create Info.plist
 cat > "$APP_BUNDLE/Contents/Info.plist" << 'PLIST'
 <?xml version="1.0" encoding="UTF-8"?>
@@ -38,11 +44,13 @@ cat > "$APP_BUNDLE/Contents/Info.plist" << 'PLIST'
     <key>CFBundleShortVersionString</key>
     <string>1.0</string>
     <key>CFBundleVersion</key>
-    <string>1</string>
+    <string>2</string>
     <key>LSMinimumSystemVersion</key>
     <string>14.0</string>
     <key>LSUIElement</key>
     <true/>
+    <key>CFBundleIconFile</key>
+    <string>AppIcon</string>
     <key>NSHighResolutionCapable</key>
     <true/>
 </dict>
